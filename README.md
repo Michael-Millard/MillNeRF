@@ -1,4 +1,3 @@
-// filepath: /home/michael-millard/Personal/MillNeRF/README.md
 # MillNeRF - Neural Radiance Fields from Scratch
 
 A complete implementation of Neural Radiance Fields (NeRF) built from scratch for educational purposes.
