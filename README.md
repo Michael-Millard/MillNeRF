@@ -11,8 +11,8 @@ git clone <your-repo>
 cd MillNeRF
 
 # Create virtual environment
-python3 -m venv .venv
-source .venv/bin/activate
+python3 -m venv .millnerf-venv
+source .millnerf-venv/bin/activate
 
 # Install dependencies
 pip install -e .

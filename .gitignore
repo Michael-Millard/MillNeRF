@@ -23,11 +23,14 @@ share/python-wheels/
 MANIFEST
 
 # Virtual environments
-.venv/
+.millnerf-venv/
+.millnerf-env/
 venv/
 ENV/
+VENV/
 env/
-.env
+.env/
+.venv/
 
 # PyTorch
 *.pth
@@ -69,7 +72,7 @@ celerybeat.pid
 
 # Environments
 .env
-.venv
+.millnerf-env
 env/
 venv/
 ENV/
