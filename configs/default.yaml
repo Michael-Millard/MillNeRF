@@ -1,0 +1,63 @@
+# NeRF Training Configuration
+
+# Data settings
+data:
+  images_dir: "data/images"
+  poses_dir: "data/poses"
+  image_scale: 4  # Downscale factor for images (1 = full resolution)
+  near: 0.1      # Near clipping plane
+  far: 10.0      # Far clipping plane
+  white_background: false
+
+# Model architecture
+model:
+  # Positional encoding
+  pos_enc_levels: 10    # Number of frequency levels for position encoding
+  dir_enc_levels: 4     # Number of frequency levels for direction encoding
+  
+  # Network architecture
+  coarse_net:
+    hidden_dim: 256
+    hidden_layers: 8
+    skip_connections: [4]  # Skip connection at layer 4
+  
+  fine_net:
+    hidden_dim: 256
+    hidden_layers: 8
+    skip_connections: [4]
+
+# Sampling
+sampling:
+  num_coarse_samples: 64   # Number of coarse samples along ray
+  num_fine_samples: 128    # Number of fine samples along ray
+  perturb: true           # Add noise to sample positions
+  raw_noise_std: 1.0      # Standard deviation of noise added to raw densities
+
+# Training
+training:
+  batch_size: 1024        # Number of rays per batch
+  learning_rate: 5e-4
+  lr_decay: 0.1
+  lr_decay_steps: [250000, 500000]
+  max_iterations: 1000000
+  
+  # Loss weights
+  coarse_loss_weight: 1.0
+  fine_loss_weight: 1.0
+  
+  # Validation
+  validate_every: 10000
+  save_checkpoint_every: 50000
+
+# Rendering
+rendering:
+  chunk_size: 32768       # Number of rays to process at once during inference
+  ndc: false             # Use normalized device coordinates (for forward-facing scenes)
+
+# Logging
+logging:
+  log_dir: "build/logs"
+  checkpoint_dir: "build/checkpoints"
+  render_dir: "build/renders"
+  log_every: 1000        # Log training stats every N iterations
+  render_test_every: 25000  # Render test images every N iterations

@@ -1,0 +1,27 @@
+# Core ML/Scientific Computing
+torch>=2.0.0
+torchvision>=0.15.0
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Computer Vision & Image Processing
+opencv-python>=4.7.0
+Pillow>=9.5.0
+imageio>=2.28.0
+
+# Visualization & Plotting
+matplotlib>=3.7.0
+plotly>=5.14.0
+tqdm>=4.65.0
+
+# 3D Geometry & Transformations
+transforms3d>=0.4.1
+
+# Configuration & Utilities
+pyyaml>=6.0
+argparse
+json5>=0.9.0
+
+# Optional: For advanced features
+# trimesh>=3.21.0  # 3D mesh processing
+# open3d>=0.17.0   # Point cloud processing
