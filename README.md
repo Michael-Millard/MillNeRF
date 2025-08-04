@@ -156,7 +156,7 @@ MillNeRF/
 │   └── test_nerf.py          # Testing script
 ├── docs/                  # Documentation
 ├── configs/               # Configuration files
-├── assets/                # Media files for README (GIFs, images)
+├── media/                 # Media files for README (GIFs, images)
 ├── data/                  # Training data (you create this)
 │   ├── images/            # Input images
 │   ├── colmap/            # COLMAP output (poses, sparse reconstruction)
