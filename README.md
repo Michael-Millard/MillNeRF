@@ -1,5 +1,10 @@
 # MillNeRF - My Neural Radiance Fields (NeRF) Implementation
 
+<div align="center">
+  <img src="media/nerf_training_progress.gif" alt="NeRF Training Progress (200k iterations)" width="100%">
+  <p><em>NeRF model training progress - watch the scene emerge from noise!</em></p>
+</div>
+
 A complete implementation of Neural Radiance Fields (NeRF) built from scratch for learning purposes. Claude did most of the work. I added a couple things here and there. NeRFs are very computationally expensive. I ran this code locally on my laptop with an RTX 4060 (8GB VRAM). The results are poor. Input images had to be < 100px in each dimension to allow higher hyperparameter values (network depth, batch sizes, chunk sizes, etc.). It works alright. I'll add some screenshots and GIFs later. This has only been tested in Ubuntu 24.04. Not sure if Windows/Mac would build but I don't think there's much OS-specific code.
 
 This project requires the use of COLMAP for camera pose extraction. Claude was initially using synthetically generated extrinsics prior to COLMAP integration which was camera calibration heresy. I've added COLMAP code (it's in main with its own sub-parser). It does SfM and extracts the camera extrinsics and stores them automatically in the desired format. All COLMAP -> NeRF conversions are done internally. COLMAP uses OpenCV's coordinate frame: +X right, +Y down, +Z forward. NeRF uses OpenGL's: +X right, +Y up, +Z backwards. Coordinate conversions are annoying. 
@@ -11,6 +16,7 @@ The interactive viewer (demos/corrected_viewer.py) almost works but needs some l
 - **COLMAP Integration**: Full Structure-from-Motion pipeline using COLMAP for camera pose estimation
 - **Coordinate System Handling**: Automatic conversion between COLMAP (OpenCV) and NeRF (OpenGL) coordinate systems
 - **Interactive Viewer**: Real-time novel view synthesis with [`demos/corrected_viewer.py`](demos/corrected_viewer.py)
+- **Animated GIF Generation**: Create training progress animations and novel view sequences
 - **Multiple Data Formats**: Support for HEIC conversion and various image formats
 - **Comprehensive Documentation**: Detailed learning materials and mathematical references 
 
@@ -55,6 +61,9 @@ python main.py train --config configs/default.yaml
 
 # Step 4: Render novel views
 python main.py render --checkpoint build/checkpoints/latest.pth
+
+# Step 5: Create animated GIF from training progress (optional)
+python main.py gif build/renders --output assets/training_progress.gif --fps 5 --max-size 400
 
 # Optional: Debug COLMAP issues if SfM fails
 python main.py debug-colmap --database_path data/colmap/database.db --images_dir path/to/images
@@ -106,6 +115,28 @@ Features:
 - **Coordinate System**: Proper handling of COLMAP ↔ NeRF coordinate conversions
 - **GPU Memory Management**: Automatic fallback for CUDA out-of-memory situations
 
+## 🎬 GIF Generation
+
+Create animated GIFs from your NeRF renders:
+
+```bash
+# Create GIF from training progress renders
+python main.py gif build/renders --output assets/training_progress.gif --fps 5
+
+# Create GIF from novel view sequence
+python main.py gif path/to/novel/views --fps 15 --max-size 600
+
+# Batch process multiple render directories
+python main.py gif experiments/ --batch --fps 10
+```
+
+Options:
+- `--fps N`: Set frame rate (default: 10 fps)
+- `--max-size N`: Resize large images to N pixels max dimension
+- `--loop N`: Set loop count (0 = infinite)
+- `--quality N`: Optimization quality 1-100
+- `--batch`: Process all subdirectories
+
 ## 📁 Project Structure
 
 ```
@@ -118,18 +149,20 @@ MillNeRF/
 │   ├── training/          # Training loops and utilities
 │   └── utils/             # Helper functions
 │       ├── colmap_utils.py    # COLMAP integration utilities
-│       └── colmap_debug.py    # COLMAP diagnostics and fixes
+│       ├── colmap_debug.py    # COLMAP diagnostics and fixes
+│       └── gif_generator.py   # GIF creation utilities
 ├── demos/                 # Demo scripts and interactive viewer
 │   ├── corrected_viewer.py    # Interactive NeRF viewer
 │   └── test_nerf.py          # Testing script
 ├── docs/                  # Documentation
 ├── configs/               # Configuration files
+├── assets/                # Media files for README (GIFs, images)
 ├── data/                  # Training data (you create this)
 │   ├── images/            # Input images
 │   ├── colmap/            # COLMAP output (poses, sparse reconstruction)
 │   ├── colmap_relaxed/    # Relaxed COLMAP settings (fallback)
 │   └── poses/             # Camera poses in NeRF format
-├── build/                 # Generated outputs
+├── build/                 # Generated outputs (not committed)
 │   ├── checkpoints/       # Model checkpoints
 │   ├── logs/              # Training logs
 │   └── renders/           # Rendered images
