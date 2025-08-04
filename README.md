@@ -1,5 +1,8 @@
 # MillNeRF - My Neural Radiance Fields (NeRF) Implementation
 
+This project is entirely based on the original NeRF paper: [NeRF: Neural Radiance Fields for View Synthesis](https://arxiv.org/abs/2003.08934) (Mildenhall et al., 2020).
+Their source code can be found [here](https://github.com/bmild/nerf).
+
 <div align="center">
   <img src="media/nerf_training_progress.gif" alt="NeRF Training Progress (200k iterations)" width="100%">
   <p><em>NeRF model training progress over 200k iterations</em></p>
@@ -229,3 +232,10 @@ This project follows standard Python package structure:
 - `setup.py` defines the package
 - `main.py` is the main entry point for the project
 - Entry points provide clean command-line interface
+
+## References
+
+**NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis**  
+Ben Mildenhall, Pratul P. Srinivasan, Matthew Tancik, Jonathan T. Barron, Ravi Ramamoorthi, Ren Ng  
+*ECCV 2020*  
+[[Paper]](https://arxiv.org/abs/2003.08934) [[Project Page]](https://www.matthewtancik.com/nerf) [[Code]](https://github.com/bmild/nerf)
