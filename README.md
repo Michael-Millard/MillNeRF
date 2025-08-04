@@ -25,13 +25,13 @@ pip install -e .
 #### Method 1: Using the main entry point (Recommended)
 ```bash
 # Prepare your data
-python src/main.py prepare --images_dir path/to/images --output_dir data
+python main.py prepare --images_dir path/to/images --output_dir data
 
 # Train the model
-python src/main.py train --config configs/default.yaml
+python main.py train --config configs/default.yaml
 
 # Render novel views
-python src/main.py render --checkpoint build/checkpoints/latest.pth
+python main.py render --checkpoint build/checkpoints/latest.pth
 ```
 
 #### Method 2: Using individual scripts
@@ -71,6 +71,7 @@ MillNeRF/
 ├── data/                  # Training data (you create this)
 ├── build/                 # Generated outputs
 ├── setup.py               # Python package setup
+├── main.py                # Main entry point
 └── requirements.txt       # Dependencies
 ```
 
@@ -78,7 +79,7 @@ MillNeRF/
 
 ```bash
 # Run tests
-python tests/test_nerf.py
+python demos/test_nerf.py
 
 # Or test individual components
 python -m pytest demos/
@@ -98,4 +99,5 @@ This project follows standard Python package structure:
 - `src/` contains all source code
 - `tests/` contains test files  
 - `setup.py` defines the package
+- `main.py` is the main entry point for the project
 - Entry points provide clean command-line interface
