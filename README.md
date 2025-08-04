@@ -1,7 +1,7 @@
 # MillNeRF - My Neural Radiance Fields (NeRF) Implementation
 
 This project is entirely based on the original NeRF paper: [NeRF: Neural Radiance Fields for View Synthesis](https://arxiv.org/abs/2003.08934) (Mildenhall et al., 2020).
-Their source code can be found [here](https://github.com/bmild/nerf).
+Their source code can be found [here](https://github.com/bmild/nerf). Their project website can be found [here](https://www.matthewtancik.com/nerf).
 
 <div align="center">
   <img src="media/nerf_training_progress.gif" alt="NeRF Training Progress (200k iterations)" width="100%">
