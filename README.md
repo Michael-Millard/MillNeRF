@@ -2,7 +2,7 @@
 
 <div align="center">
   <img src="media/nerf_training_progress.gif" alt="NeRF Training Progress (200k iterations)" width="100%">
-  <p><em>NeRF model training progress - watch the scene emerge from noise!</em></p>
+  <p><em>NeRF model training progress over 200k iterations</em></p>
 </div>
 
 A complete implementation of Neural Radiance Fields (NeRF) built from scratch for learning purposes. Claude did most of the work. I added a couple things here and there. NeRFs are very computationally expensive. I ran this code locally on my laptop with an RTX 4060 (8GB VRAM). The results are poor. Input images had to be < 100px in each dimension to allow higher hyperparameter values (network depth, batch sizes, chunk sizes, etc.). It works alright. I'll add some screenshots and GIFs later. This has only been tested in Ubuntu 24.04. Not sure if Windows/Mac would build but I don't think there's much OS-specific code.
