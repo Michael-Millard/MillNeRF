@@ -25,6 +25,7 @@ class VolumeRenderer:
         """
         self.config = config
         self.device = device
+        self.training = True  # Training mode flag
         
         # Sampling configuration
         sampling_config = config.get('sampling', {})
@@ -101,8 +102,10 @@ class VolumeRenderer:
         # Add small epsilon to prevent NaN
         weights_mid = weights_mid + 1e-5
         
-        # Create PDF
-        pdf = weights_mid / torch.sum(weights_mid, -1, keepdim=True)
+        # Create PDF - add safeguard for division
+        weights_sum = torch.sum(weights_mid, -1, keepdim=True)
+        weights_sum = torch.clamp(weights_sum, min=1e-10)  # Prevent division by very small numbers
+        pdf = weights_mid / weights_sum
         cdf = torch.cumsum(pdf, -1)
         cdf = torch.cat([torch.zeros_like(cdf[..., :1]), cdf], -1)
         
@@ -224,7 +227,7 @@ class VolumeRenderer:
         """
         # Generate all rays for the image
         from ..utils.nerf_utils import get_rays
-        rays_o, rays_d = get_rays(H, W, focal, c2w)
+        rays_o, rays_d = get_rays(H, W, focal, c2w, device=self.device)
         rays_o = rays_o.reshape(-1, 3)  # [H*W, 3]
         rays_d = rays_d.reshape(-1, 3)  # [H*W, 3]
         
@@ -256,35 +259,6 @@ class VolumeRenderer:
                 results[key] = val.reshape(H, W)
         
         return results
-    
-    def __init__(self, config: dict, device: torch.device):
-        """
-        Initialize volume renderer.
-        
-        Args:
-            config: Configuration dictionary
-            device: Device to run on
-        """
-        self.config = config
-        self.device = device
-        self.training = True  # Training mode flag
-        
-        # Sampling configuration
-        sampling_config = config.get('sampling', {})
-        self.num_coarse_samples = sampling_config.get('num_coarse_samples', 64)
-        self.num_fine_samples = sampling_config.get('num_fine_samples', 128)
-        self.perturb = sampling_config.get('perturb', True)
-        self.raw_noise_std = sampling_config.get('raw_noise_std', 1.0)
-        
-        # Data configuration
-        data_config = config.get('data', {})
-        self.near = data_config.get('near', 0.1)
-        self.far = data_config.get('far', 10.0)
-        self.white_background = data_config.get('white_background', False)
-        
-        # Rendering configuration
-        rendering_config = config.get('rendering', {})
-        self.chunk_size = rendering_config.get('chunk_size', 32768)
 
 
 def create_volume_renderer(config: dict, device: torch.device) -> VolumeRenderer:

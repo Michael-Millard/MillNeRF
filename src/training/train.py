@@ -40,11 +40,11 @@ class NeRFTrainer:
         # Training configuration
         training_config = config.get('training', {})
         self.max_iterations = training_config.get('max_iterations', 1000000)
-        self.learning_rate = training_config.get('learning_rate', 5e-4)
-        self.lr_decay = training_config.get('lr_decay', 0.1)
+        self.learning_rate = float(training_config.get('learning_rate', 5e-4))
+        self.lr_decay = float(training_config.get('lr_decay', 0.1))
         self.lr_decay_steps = training_config.get('lr_decay_steps', [250000, 500000])
-        self.coarse_loss_weight = training_config.get('coarse_loss_weight', 1.0)
-        self.fine_loss_weight = training_config.get('fine_loss_weight', 1.0)
+        self.coarse_loss_weight = float(training_config.get('coarse_loss_weight', 1.0))
+        self.fine_loss_weight = float(training_config.get('fine_loss_weight', 1.0))
         
         # Logging configuration
         logging_config = config.get('logging', {})
@@ -136,6 +136,12 @@ class NeRFTrainer:
         # Render rays
         outputs = self.renderer.render_rays(self.model, rays_o, rays_d)
         
+        # Check for NaN/inf in outputs (debugging)
+        for key, val in outputs.items():
+            if torch.isnan(val).any() or torch.isinf(val).any():
+                print(f"WARNING: NaN/inf detected in {key} during training step {self.iteration}")
+                # Continue training but log the issue
+        
         # Compute losses
         loss_coarse = img2mse(outputs['rgb_coarse'], target_rgb)
         
@@ -177,13 +183,16 @@ class NeRFTrainer:
             for i in range(n_val_images):
                 sample = self.val_dataset[i]
                 
+                # Ensure pose is on the correct device
+                pose = sample['pose'].to(self.device)
+                
                 # Render image
                 outputs = self.renderer.render_image(
                     self.model, 
                     sample['H'], 
                     sample['W'], 
                     sample['focal'], 
-                    sample['pose']
+                    pose
                 )
                 
                 # Use fine network output if available, otherwise coarse
@@ -193,7 +202,7 @@ class NeRFTrainer:
                     pred_rgb = outputs['rgb_coarse']
                 
                 # Compute PSNR
-                target_rgb = sample['image']
+                target_rgb = sample['image'].to(self.device)
                 mse = img2mse(pred_rgb, target_rgb)
                 psnr = mse2psnr(mse)
                 psnrs.append(psnr.item())
@@ -213,13 +222,16 @@ class NeRFTrainer:
             # Use first validation image
             sample = self.val_dataset[0]
             
+            # Ensure pose is on the correct device
+            pose = sample['pose'].to(self.device)
+            
             # Render image
             outputs = self.renderer.render_image(
                 self.model,
                 sample['H'],
                 sample['W'], 
                 sample['focal'],
-                sample['pose']
+                pose
             )
             
             # Use fine network output if available
@@ -287,7 +299,7 @@ class NeRFTrainer:
         """Load model checkpoint."""
         print(f"Loading checkpoint from {checkpoint_path}")
         
-        checkpoint = torch.load(checkpoint_path, map_location=self.device)
+        checkpoint = torch.load(checkpoint_path, map_location=self.device, weights_only=False)
         
         self.model.load_state_dict(checkpoint['model_state_dict'])
         self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
@@ -349,27 +361,28 @@ class NeRFTrainer:
         self.save_checkpoint()
 
 
-def main():
+def main(args=None):
     """Main training function."""
-    parser = argparse.ArgumentParser(description='Train NeRF model')
-    parser.add_argument('--config', type=str, default='configs/default.yaml',
-                       help='Path to configuration file')
-    parser.add_argument('--resume', type=str, default=None,
-                       help='Path to checkpoint to resume from')
-    parser.add_argument('--device', type=str, default='auto',
-                       help='Device to use (cuda/cpu/auto)')
-    
-    args = parser.parse_args()
+    if args is None:
+        parser = argparse.ArgumentParser(description='Train NeRF model')
+        parser.add_argument('--config', type=str, default='configs/default.yaml',
+                           help='Path to configuration file')
+        parser.add_argument('--resume', type=str, default=None,
+                           help='Path to checkpoint to resume from')
+        parser.add_argument('--device', type=str, default='auto',
+                           help='Device to use (cuda/cpu/auto)')
+        
+        args = parser.parse_args()
     
     # Load configuration
     with open(args.config, 'r') as f:
         config = yaml.safe_load(f)
     
     # Set device
-    if args.device == 'auto':
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    else:
+    if hasattr(args, 'device') and args.device != 'auto':
         device = torch.device(args.device)
+    else:
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     print(f"Using device: {device}")
     

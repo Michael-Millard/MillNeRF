@@ -3,7 +3,7 @@
 # Data settings
 data:
   images_dir: "data/images"
-  poses_dir: "data/poses"
+  poses_file: "data/poses/transforms_colmap.json"  # Use real COLMAP poses
   image_scale: 4  # Downscale factor for images (1 = full resolution)
   near: 0.1      # Near clipping plane
   far: 10.0      # Far clipping plane
@@ -11,53 +11,53 @@ data:
 
 # Model architecture
 model:
-  # Positional encoding
-  pos_enc_levels: 10    # Number of frequency levels for position encoding
-  dir_enc_levels: 4     # Number of frequency levels for direction encoding
+  # Positional encoding - INCREASED for better detail capture
+  pos_enc_levels: 12    # Increased from 10 for finer details
+  dir_enc_levels: 6     # Increased from 4 for better view dependence
   
-  # Network architecture
+  # Network architecture - BALANCED for quality-stability
   coarse_net:
-    hidden_dim: 256
-    hidden_layers: 8
-    skip_connections: [4]  # Skip connection at layer 4
+    hidden_dim: 256     # More conservative for stability
+    hidden_layers: 8    # Standard depth
+    skip_connections: [4]  # Single skip connection
   
   fine_net:
-    hidden_dim: 256
-    hidden_layers: 8
-    skip_connections: [4]
+    hidden_dim: 256     # More conservative for stability  
+    hidden_layers: 8    # Standard depth
+    skip_connections: [4]  # Single skip connection
 
-# Sampling
+# Sampling - MODERATE optimization for stability
 sampling:
-  num_coarse_samples: 64   # Number of coarse samples along ray
-  num_fine_samples: 128    # Number of fine samples along ray
-  perturb: true           # Add noise to sample positions
-  raw_noise_std: 1.0      # Standard deviation of noise added to raw densities
+  num_coarse_samples: 64    # Back to standard for stability
+  num_fine_samples: 128     # Moderate increase for quality
+  perturb: true            # Keep noise for regularization
+  raw_noise_std: 1.0       # Standard noise level
 
-# Training
+# Training - BALANCED for quality and stability
 training:
-  batch_size: 1024        # Number of rays per batch
-  learning_rate: 5e-4
-  lr_decay: 0.1
-  lr_decay_steps: [250000, 500000]
-  max_iterations: 1000000
+  batch_size: 1024        # Larger batches for stable gradients
+  learning_rate: 5e-4     # Standard NeRF learning rate
+  lr_decay: 0.1           # Standard decay
+  lr_decay_steps: [100000, 150000]  # Earlier decay for convergence
+  max_iterations: 200000   # Sufficient for convergence
   
-  # Loss weights
-  coarse_loss_weight: 1.0
-  fine_loss_weight: 1.0
+  # Loss weights - Fine network more important
+  coarse_loss_weight: 0.5  # Reduced coarse importance
+  fine_loss_weight: 1.0    # Fine network is key for quality
   
-  # Validation
-  validate_every: 10000
-  save_checkpoint_every: 50000
+  # Validation - Optimized monitoring
+  validate_every: 1000       # Balanced frequency for quality monitoring
+  save_checkpoint_every: 25000 # More frequent checkpoints for safety
 
-# Rendering
+# Rendering - STANDARD for reliability
 rendering:
-  chunk_size: 32768       # Number of rays to process at once during inference
+  chunk_size: 4096        # Good balance of quality and memory
   ndc: false             # Use normalized device coordinates (for forward-facing scenes)
 
-# Logging
+# Logging - Quality focused
 logging:
   log_dir: "build/logs"
   checkpoint_dir: "build/checkpoints"
   render_dir: "build/renders"
-  log_every: 1000        # Log training stats every N iterations
-  render_test_every: 25000  # Render test images every N iterations
+  log_every: 1000           # Frequent monitoring for quality tracking
+  render_test_every: 1000  # Regular quality assessment
