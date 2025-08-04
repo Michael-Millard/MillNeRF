@@ -131,6 +131,9 @@ Thumbs.db
 *.exr
 *.hdr
 
+# Except in media!
+!media/*
+
 # Configuration files with secrets
 config_local.yaml
 .env.local
