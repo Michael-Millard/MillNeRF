@@ -12,6 +12,10 @@ import os
 project_root = os.path.dirname(os.path.dirname(__file__))
 sys.path.insert(0, project_root)
 
+from src.models.nerf import create_nerf_model
+from src.rendering.volume_renderer import create_volume_renderer
+from src.utils.nerf_utils import get_rays, sample_rays
+
 def get_config_path():
     """Get the path to the default config file."""
     # Look for config relative to project root
@@ -23,11 +27,6 @@ def get_config_path():
     if os.path.exists(config_path):
         return config_path
     raise FileNotFoundError("Could not find configs/default.yaml")
-
-from src.models.nerf import create_nerf_model
-from src.rendering.volume_renderer import create_volume_renderer
-from src.utils.nerf_utils import get_rays, sample_rays
-
 
 def test_model_creation():
     """Test model creation and forward pass."""

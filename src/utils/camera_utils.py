@@ -205,42 +205,42 @@ def generate_render_path(c2w: np.ndarray, up: np.ndarray, rads: np.ndarray,
     return render_poses
 
 
-def get_camera_intrinsics(H: int, W: int, focal: float) -> np.ndarray:
-    """
-    Get camera intrinsic matrix.
-    
-    Args:
-        H: Image height
-        W: Image width
-        focal: Focal length
-        
-    Returns:
-        Intrinsic matrix [3, 3]
-    """
-    K = np.array([
-        [focal, 0, W/2],
-        [0, focal, H/2],
-        [0, 0, 1]
-    ])
-    return K
+#def get_camera_intrinsics(H: int, W: int, focal: float) -> np.ndarray:
+#    """
+#    Get camera intrinsic matrix.
+#    
+#    Args:
+#        H: Image height
+#        W: Image width
+#        focal: Focal length
+#        
+#    Returns:
+#        Intrinsic matrix [3, 3]
+#    """
+#    K = np.array([
+#        [focal, 0, W/2],
+#        [0, focal, H/2],
+#        [0, 0, 1]
+#    ])
+#    return K
 
 
-def load_colmap_data(basedir: str, factor: int = 8) -> Tuple[np.ndarray, np.ndarray, List[str], int, int]:
-    """
-    Load COLMAP data (poses, images, intrinsics).
-    
-    Args:
-        basedir: Base directory containing COLMAP output
-        factor: Downsampling factor
-        
-    Returns:
-        poses, bds, imgfiles, H, W
-    """
-    # This is a placeholder - you would implement actual COLMAP loading here
-    # For now, return dummy data
-    poses = np.eye(4)[None].repeat(10, axis=0)
-    bds = np.array([[1.0, 10.0]] * 10)
-    imgfiles = [f"image_{i:03d}.jpg" for i in range(10)]
-    H, W = 480 // factor, 640 // factor
-    
-    return poses, bds, imgfiles, H, W
+#def load_colmap_data(basedir: str, factor: int = 8) -> Tuple[np.ndarray, np.ndarray, List[str], int, int]:
+#    """
+#    Load COLMAP data (poses, images, intrinsics).
+#    
+#    Args:
+#        basedir: Base directory containing COLMAP output
+#        factor: Downsampling factor
+#        
+#    Returns:
+#        poses, bds, imgfiles, H, W
+#    """
+#    # This is a placeholder - you would implement actual COLMAP loading here
+#    # For now, return dummy data
+#    poses = np.eye(4)[None].repeat(10, axis=0)
+#    bds = np.array([[1.0, 10.0]] * 10)
+#    imgfiles = [f"image_{i:03d}.jpg" for i in range(10)]
+#    H, W = 480 // factor, 640 // factor
+#    
+#    return poses, bds, imgfiles, H, W
