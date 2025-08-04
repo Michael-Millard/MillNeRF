@@ -5,7 +5,7 @@
   <p><em>NeRF model training progress over 200k iterations</em></p>
 </div>
 
-A complete implementation of Neural Radiance Fields (NeRF) built from scratch for learning purposes. Claude did most of the work. I added a couple things here and there. NeRFs are very computationally expensive. I ran this code locally on my laptop with an RTX 4060 (8GB VRAM). The results are poor. Input images had to be < 100px in each dimension to allow higher hyperparameter values (network depth, batch sizes, chunk sizes, etc.). It works alright. I'll add some screenshots and GIFs later. This has only been tested in Ubuntu 24.04. Not sure if Windows/Mac would build but I don't think there's much OS-specific code.
+A complete implementation of Neural Radiance Fields (NeRF) built from scratch for learning purposes. Claude did most of the work. I added a couple things here and there. NeRFs are very computationally expensive. I ran this code locally on my laptop with an RTX 4060 (8GB VRAM). The results are poor. Input images had to be < 100px in each dimension to allow higher hyperparameter values (network depth, batch sizes, chunk sizes, etc.). It works alright. I'll add some screenshots and GIFs later. This has only been tested in Ubuntu 24.04 (Linux).
 
 This project requires the use of COLMAP for camera pose extraction. Claude was initially using synthetically generated extrinsics prior to COLMAP integration which was camera calibration heresy. I've added COLMAP code (it's in main with its own sub-parser). It does SfM and extracts the camera extrinsics and stores them automatically in the desired format. All COLMAP -> NeRF conversions are done internally. COLMAP uses OpenCV's coordinate frame: +X right, +Y down, +Z forward. NeRF uses OpenGL's: +X right, +Y up, +Z backwards. Coordinate conversions are annoying. 
 
@@ -22,7 +22,7 @@ The interactive viewer (demos/corrected_viewer.py) almost works but needs some l
 
 ## 🚀 Quick Start
 
-### Installation
+### Installation (Linux)
 ```bash
 # Clone and setup
 git clone <your-repo>
