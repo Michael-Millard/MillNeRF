@@ -1,8 +1,18 @@
 # MillNeRF - My Neural Radiance Fields (NeRF) Implementation
 
-A complete implementation of Neural Radiance Fields (NeRF) built from scratch for learning purposes. Claude did most of the work. I added a couple things here and there. NeRFs are very computationally expensive. I ran this code locally on my laptop with an RTX 4060 (8GB VRAM). The results are poor. Input images had to be < 100px in each dimension to allow higher hyperparameter values (network depth, batch sizes, chunk sizes, etc.). It works alright. I'll add some screenshots and GIFs later. This has only been tested in Ubuntu 24.04. Not sure if Windows/Mac would build but I don't think there's much OS-specific code. 
+A complete implementation of Neural Radiance Fields (NeRF) built from scratch for learning purposes. Claude did most of the work. I added a couple things here and there. NeRFs are very computationally expensive. I ran this code locally on my laptop with an RTX 4060 (8GB VRAM). The results are poor. Input images had to be < 100px in each dimension to allow higher hyperparameter values (network depth, batch sizes, chunk sizes, etc.). It works alright. I'll add some screenshots and GIFs later. This has only been tested in Ubuntu 24.04. Not sure if Windows/Mac would build but I don't think there's much OS-specific code.
 
-TODO: Add COLMAP parts to the README. Claude was initially using circularly generated extrinsics which was camera calibration heresy. I've added COLMAP code (it's in main with its own sub-parser). It does SfM and extracts the camera extrinsics and stores them automatically in the desired format. All COLMAP -> NeRF conversions are done internally. COLMAP uses OpenCV's coordinate frame: +X right, +Y down, +Z forward. NeRF uses OpenGL's: +X right, +Y up, +Z backwards. Coordinate conversions are annoying. The interactive viewer ([`demos/corrected_viewer.py`](demos/corrected_viewer.py)) almost works but needs some love. Coordinate frame conversions for pose extraction is the problem. 
+This project requires the use of COLMAP for camera pose extraction. Claude was initially using synthetically generated extrinsics prior to COLMAP integration which was camera calibration heresy. I've added COLMAP code (it's in main with its own sub-parser). It does SfM and extracts the camera extrinsics and stores them automatically in the desired format. All COLMAP -> NeRF conversions are done internally. COLMAP uses OpenCV's coordinate frame: +X right, +Y down, +Z forward. NeRF uses OpenGL's: +X right, +Y up, +Z backwards. Coordinate conversions are annoying. 
+
+The interactive viewer (demos/corrected_viewer.py) almost works but needs some love. Coordinate frame conversions for pose extraction is the problem. I'll get to that soon.
+
+## ✨ Features
+
+- **COLMAP Integration**: Full Structure-from-Motion pipeline using COLMAP for camera pose estimation
+- **Coordinate System Handling**: Automatic conversion between COLMAP (OpenCV) and NeRF (OpenGL) coordinate systems
+- **Interactive Viewer**: Real-time novel view synthesis with [`demos/corrected_viewer.py`](demos/corrected_viewer.py)
+- **Multiple Data Formats**: Support for HEIC conversion and various image formats
+- **Comprehensive Documentation**: Detailed learning materials and mathematical references 
 
 ## 🚀 Quick Start
 
@@ -12,6 +22,10 @@ TODO: Add COLMAP parts to the README. Claude was initially using circularly gene
 git clone <your-repo>
 cd MillNeRF
 
+# Install COLMAP (required for camera pose estimation)
+sudo apt update
+sudo apt install colmap
+
 # Create virtual environment
 python3 -m venv .millnerf-venv
 source .millnerf-venv/bin/activate
@@ -20,11 +34,35 @@ source .millnerf-venv/bin/activate
 pip install -e .
 ```
 
+### Requirements
+- **Python 3.8+**: I used 3.12
+- **COLMAP**: For Structure-from-Motion camera pose estimation
+- **CUDA-capable GPU**: Recommended for reasonable training times
+- **8GB+ VRAM**: For full-resolution training (can work with less using smaller images)
+
 ### Usage
 
-#### Method 1: Using the main entry point (Recommended)
+#### Method 1: Complete Pipeline with COLMAP (Recommended)
 ```bash
-# Prepare your data
+# Step 1: Convert HEIC images to JPEG (if needed -> iPhone problem)
+python main.py convert --input_dir path/to/heic/images --output_dir path/to/jpeg/images
+
+# Step 2: Run COLMAP Structure-from-Motion to estimate camera poses
+python main.py colmap --images_dir path/to/images --output_dir data/colmap
+
+# Step 3: Train the NeRF model
+python main.py train --config configs/default.yaml
+
+# Step 4: Render novel views
+python main.py render --checkpoint build/checkpoints/latest.pth
+
+# Optional: Debug COLMAP issues if SfM fails
+python main.py debug-colmap --database_path data/colmap/database.db --images_dir path/to/images
+```
+
+#### Method 2: Using the main entry point (Legacy)
+```bash
+# Prepare your data (uses synthetic poses - NOT recommended)
 python main.py prepare --images_dir path/to/images --output_dir data
 
 # Train the model
@@ -34,7 +72,7 @@ python main.py train --config configs/default.yaml
 python main.py render --checkpoint build/checkpoints/latest.pth
 ```
 
-#### Method 2: Using individual scripts
+#### Method 3: Using individual scripts
 ```bash
 # Prepare data
 python src/data/prepare.py --images_dir path/to/images
@@ -46,13 +84,27 @@ python src/training/train.py --config configs/default.yaml
 python src/rendering/render.py --checkpoint build/checkpoints/latest.pth
 ```
 
-#### Method 3: After installation with pip
+#### Method 4: After installation with pip
 ```bash
 # If you installed with pip install -e .
-millnerf prepare --images_dir path/to/images
+millnerf colmap --images_dir path/to/images --output_dir data/colmap
 millnerf train --config configs/default.yaml
 millnerf render --checkpoint build/checkpoints/latest.pth
 ```
+
+## 🎯 Interactive Viewer
+
+Launch the interactive NeRF viewer for real-time novel view synthesis:
+
+```bash
+python demos/corrected_viewer.py --checkpoint build/checkpoints/latest.pth --config configs/default.yaml
+```
+
+Features:
+- **Training Mode**: Browse through original training poses
+- **Novel Mode**: Generate new viewpoints using spherical coordinates
+- **Coordinate System**: Proper handling of COLMAP ↔ NeRF coordinate conversions
+- **GPU Memory Management**: Automatic fallback for CUDA out-of-memory situations
 
 ## 📁 Project Structure
 
@@ -65,15 +117,58 @@ MillNeRF/
 │   ├── rendering/         # Volume rendering and view synthesis
 │   ├── training/          # Training loops and utilities
 │   └── utils/             # Helper functions
-├── demos/                 # Demo scripts
+│       ├── colmap_utils.py    # COLMAP integration utilities
+│       └── colmap_debug.py    # COLMAP diagnostics and fixes
+├── demos/                 # Demo scripts and interactive viewer
+│   ├── corrected_viewer.py    # Interactive NeRF viewer
+│   └── test_nerf.py          # Testing script
 ├── docs/                  # Documentation
 ├── configs/               # Configuration files
 ├── data/                  # Training data (you create this)
+│   ├── images/            # Input images
+│   ├── colmap/            # COLMAP output (poses, sparse reconstruction)
+│   ├── colmap_relaxed/    # Relaxed COLMAP settings (fallback)
+│   └── poses/             # Camera poses in NeRF format
 ├── build/                 # Generated outputs
+│   ├── checkpoints/       # Model checkpoints
+│   ├── logs/              # Training logs
+│   └── renders/           # Rendered images
 ├── setup.py               # Python package setup
 ├── main.py                # Main entry point
 └── requirements.txt       # Dependencies
 ```
+
+## 🔧 COLMAP Integration
+
+This implementation uses COLMAP for robust camera pose estimation from your images:
+
+### Coordinate System Conversion
+- **COLMAP Convention**: OpenCV coordinate system (+X right, +Y down, +Z forward)
+- **NeRF Convention**: OpenGL coordinate system (+X right, +Y up, +Z backward)
+- **Automatic Conversion**: All coordinate transformations are handled internally
+
+### Camera Models Supported
+- `PINHOLE`: Basic pinhole camera model
+- `SIMPLE_PINHOLE`: Simplified pinhole with single focal length
+- `OPENCV`: OpenCV distortion model (default)
+- `RADIAL`: Radial distortion model
+
+### Troubleshooting COLMAP
+If COLMAP fails to reconstruct your scene:
+
+```bash
+# Run diagnostics
+python main.py debug-colmap --database_path data/colmap/database.db --images_dir path/to/images
+
+# Try with relaxed settings
+python main.py colmap --images_dir path/to/images --output_dir data/colmap_relaxed --camera_model SIMPLE_PINHOLE
+```
+
+Common issues and solutions:
+- **Too few features**: Ensure images have sufficient texture and overlap
+- **Poor lighting**: Images should be well-lit with consistent exposure
+- **Motion blur**: Use sharp, well-focused images
+- **Insufficient overlap**: Ensure 60-80% overlap between adjacent images
 
 ## 🧪 Testing
 
