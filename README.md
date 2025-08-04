@@ -1,6 +1,6 @@
-# MillNeRF - Neural Radiance Fields from Scratch
+# MillNeRF - My Neural Radiance Fields (NeRF) Implementation
 
-A complete implementation of Neural Radiance Fields (NeRF) built from scratch for educational purposes.
+A complete implementation of Neural Radiance Fields (NeRF) built from scratch for learning purposes. Claude did most of the work. I added a couple things here and there. NeRFs are very computationally expensive. I ran this code locally on my laptop with an RTX 4060 (8GB VRAM). The results are poor. Input images had to be < 100px in each dimension to allow higher hyperparameter values (network depth, batch sizes, chunk sizes, etc.). It works alright. I'll add some screenshots and GIFs later. This has only been tested in Ubuntu 24.04. Not sure if Windows/Mac would build but I don't think there's much OS-specific code. 
 
 ## 🚀 Quick Start
 
