@@ -14,7 +14,7 @@ This project requires the use of COLMAP for camera pose extraction. Claude was i
 
 The interactive viewer (demos/corrected_viewer.py) almost works but needs some love. Coordinate frame conversions for pose extraction is the problem. I'll get to that soon.
 
-## ✨ Features
+## Features
 
 - **COLMAP Integration**: Full Structure-from-Motion pipeline using COLMAP for camera pose estimation
 - **Coordinate System Handling**: Automatic conversion between COLMAP (OpenCV) and NeRF (OpenGL) coordinate systems
@@ -23,7 +23,7 @@ The interactive viewer (demos/corrected_viewer.py) almost works but needs some l
 - **Multiple Data Formats**: Support for HEIC conversion and various image formats
 - **Comprehensive Documentation**: Detailed learning materials and mathematical references 
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation (Linux)
 ```bash
@@ -104,7 +104,7 @@ millnerf train --config configs/default.yaml
 millnerf render --checkpoint build/checkpoints/latest.pth
 ```
 
-## 🎯 Interactive Viewer
+## Interactive Viewer
 
 Launch the interactive NeRF viewer for real-time novel view synthesis:
 
@@ -118,7 +118,7 @@ Features:
 - **Coordinate System**: Proper handling of COLMAP ↔ NeRF coordinate conversions
 - **GPU Memory Management**: Automatic fallback for CUDA out-of-memory situations
 
-## 🎬 GIF Generation
+## GIF Generation
 
 Create animated GIFs from your NeRF renders:
 
@@ -140,7 +140,7 @@ Options:
 - `--quality N`: Optimization quality 1-100
 - `--batch`: Process all subdirectories
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 MillNeRF/
@@ -174,7 +174,7 @@ MillNeRF/
 └── requirements.txt       # Dependencies
 ```
 
-## 🔧 COLMAP Integration
+## COLMAP Integration
 
 This implementation uses COLMAP for robust camera pose estimation from your images:
 
@@ -206,7 +206,7 @@ Common issues and solutions:
 - **Motion blur**: Use sharp, well-focused images
 - **Insufficient overlap**: Ensure 60-80% overlap between adjacent images
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run tests
@@ -216,15 +216,16 @@ python demos/test_nerf.py
 python -m pytest demos/
 ```
 
-## 📚 Learning Resources
+## Learning Resources
 
 Check the [`docs/`](docs/) folder for comprehensive learning materials:
 - [`docs/NeRF_Tutorial.md`](docs/NeRF_Tutorial.md) - Hands-on tutorial
 - [`docs/NeRF_Deep_Dive.md`](docs/NeRF_Deep_Dive.md) - Complete theory
 - [`docs/Math_Reference.md`](docs/Math_Reference.md) - Mathematical reference
 - [`docs/GETTING_STARTED.md`](docs/GETTING_STARTED.md) - Practical guide
+All of these were made by Claude. Pretty neat.
 
-## 🛠️ Development
+## Development
 
 This project follows standard Python package structure:
 - `src/` contains all source code
