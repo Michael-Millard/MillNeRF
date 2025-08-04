@@ -223,6 +223,7 @@ Check the [`docs/`](docs/) folder for comprehensive learning materials:
 - [`docs/NeRF_Deep_Dive.md`](docs/NeRF_Deep_Dive.md) - Complete theory
 - [`docs/Math_Reference.md`](docs/Math_Reference.md) - Mathematical reference
 - [`docs/GETTING_STARTED.md`](docs/GETTING_STARTED.md) - Practical guide
+  
 All of these were made by Claude. Pretty neat.
 
 ## Development
