@@ -28,7 +28,7 @@ The interactive viewer (demos/corrected_viewer.py) almost works but needs some l
 ### Installation (Linux)
 ```bash
 # Clone and setup
-git clone <your-repo>
+git clone https://github.com/Michael-Millard/MillNeRF.git
 cd MillNeRF
 
 # Install COLMAP (required for camera pose estimation)
